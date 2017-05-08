@@ -1,0 +1,7 @@
+#models/20M_gen/*.t7
+lib/*.jar
+tmp.src.txt
+*.swp
+*.swo
+s2sa/*.swp
+s2sa/*.swo
