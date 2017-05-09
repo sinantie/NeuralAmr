@@ -1,4 +1,3 @@
-require('json')
 local beam = require 's2sa.beam'
 
 function main()

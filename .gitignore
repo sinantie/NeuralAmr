@@ -1,5 +1,4 @@
-#models/20M_gen/*.t7
-lib/*.jar
+#lib/*.jar
 tmp.src.txt
 *.swp
 *.swo
