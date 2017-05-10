@@ -1,6 +1,6 @@
 require 's2sa.memory'
 require 's2sa.plinear'
-local debugger = require("fb.debugger")
+-- local debugger = require("fb.debugger")
 --kept for compatibilty reason with earlier model
 --torch.class('nn.LinearNoBias', 'nn.Linear')
 

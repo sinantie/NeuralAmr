@@ -1,5 +1,5 @@
 -- module for memory management
-local debugger = require("fb.debugger")
+-- local debugger = require("fb.debugger")
 -- reuseMem is used for reusing output tensor for storing gradInput and optimizing memory allocation
 -- use :reuseMem() on the module to allow the feature
 -- then apply setReuse after initialization
