@@ -9,9 +9,12 @@ AMR_NL_ALIGN=resources/training-amr-nl-alignments.txt
 # Examples:
 # full : (w / write :arg1 (s / something))
 # stripped :  write :arg1 something
+# anonymized : write :arg0 person_name_0 :arg1 something
 
 INPUT_TYPE="${1:-full}"
 INPUT_FILE="${2:-resources/sample-data/sample-amr.txt}"
+# NOTE: leave output_file same as src_file in order for anonymization/deAnonymization to work properly.
+# You may change it safely, if you are inputting already anonymized AMR graphs.
 
 th evaluate.lua \
 	-interactive_mode 0 \

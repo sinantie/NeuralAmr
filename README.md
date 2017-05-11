@@ -45,20 +45,32 @@ export CUDNN_PATH="path_to_cudnn/lib64/libcudnn.so"
 You can generate text from AMR graphs using our pre-trained model on 20M sentences from Gigaword, in two different ways:
 - By running an interactive tool that reads input from `stdin`:
 ```
-./predict_amr_single.sh [stripped|full]
+./predict_amr_single.sh [stripped|full|anonymized]
 ```
-You can optionally provide an argument that tells the system to accept either `full` AMR as described in the [annotation guidelines](https://github.com/amrisi/amr-guidelines/blob/master/amr.md), or a `stripped` version, which removes variables, senses, parentheses from leaves, and assumes a simpler markup for Named Entities (for more details and examples, see [here]()).
 
 - By running the prediction on a single file, which contains an AMR graph per line:
 ```
-./predict_amr.sh [stripped|full|anonymized] [input_file]
+./predict_amr.sh input_file [stripped|full|anonymized]
 ```
-Similar to the options above, you may provide the input in `anonymized` format, i.e., similar to `stripped` but with Named Entities, date mentions and numbers, anonymized (for more details and examples, see [here]()). For example:
+
+You can optionally provide an argument that tells the system to accept either `full` AMR as described in the [annotation guidelines](https://github.com/amrisi/amr-guidelines/blob/master/amr.md), or a `stripped` version, which removes variables, senses, parentheses from leaves, and assumes a simpler markup for Named Entities, date mentions, and numbers. You can also provide the input in `anonymized` format, i.e., similar to `stripped` but with Named Entities, date mentions, and numbers anonymized.
+
+An example using the `full` format:
 ```
-hold :ARG0 ( person :ARG0-of ( have-org-role :ARG1 location_name_0 :ARG2 official ) ) :ARG1 ( meet :ARG0 ( person :ARG1-of expert :ARG2-of group ) )
- :time ( date-entity year_date-entity_0 month_date-entity_0 )
- :location location_name_1
+(h / hold-04 :ARG0 (p2 / person :ARG0-of (h2 / have-org-role-91 :ARG1 (c2 / country :name (n3 / name :op1 “United" op2: “States”)) :ARG2 (o / official)))  :ARG1 (m / meet-03 :ARG0 (p / person  :ARG1-of (e / expert-01) :ARG2-of (g / group-01))) :time (d2 / date-entity :year 2002 :month 1) :location (c / city  :name (n / name :op1 “New" :op2 “York”)))
 ```
+
+The same example using the `stripped` format:
+```
+hold :ARG0 ( person :ARG0-of ( have-org-role :ARG1 (country :name "United States") :ARG2 official)) :ARG1 (meet :ARG0 (person  :ARG1-of expert :ARG2-of  group)) :time (date-entity :year 2002 :month 1) :location (city :name "New York" )
+```
+
+The same example using the `anonymized` format:
+```
+hold :ARG0 ( person :ARG0-of ( have-org-role :ARG1 location_name_0 :ARG2 official ) ) :ARG1 ( meet :ARG0 ( person :ARG1-of expert :ARG2-of group ) ) :time ( date-entity year_date-entity_0 month_date-entity_0 ) :location location_name_1
+```
+
+For full details and more examples, see [here](). 
 
 ## Details
 
@@ -67,7 +79,6 @@ hold :ARG0 ( person :ARG0-of ( have-org-role :ARG1 location_name_0 :ARG2 officia
 - `model [str]`: The path to the trained model.
 - `input_type [stripped|full]`: Set `full` for standard AMR graph input, or `stripped` which expects AMR graphs with no variables, senses, parentheses from leaves, and assumes a simpler markup for Named Entities (for more details and examples, see [here]()).
 - `src_file [str]`: The path to the input file that contains AMR graphs, one per line.
-- `output_file [str]`: The path to the output file that will contain the generated text for each AMR graph of the `src_file`.
 - `gpuid [int]`: The GPU id number.
 - `src_dict, targ_dict [str]`: Path to source and target dictionaries. These are usually generated during preprocessing of the corpus. ==Note==: `src_dict` and `targ_dict` paths need to be reversed when generating text or parsing to AMR.
 - `beam [int]`: The beam size of the decoder (default is 5).

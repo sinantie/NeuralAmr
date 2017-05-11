@@ -1,4 +1,8 @@
 #lib/*.jar
+resources/dev
+resources/sample-data/*.anonymized
+resources/sample-data/*.alignments
+resources/sample-data/*.pred
 tmp.src.txt
 *.swp
 *.swo
