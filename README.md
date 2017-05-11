@@ -23,6 +23,7 @@ nn nngraph cutorch cunn cudnn
 
 *(Only for training models)* 
 
+- Install `cudnn.torch` from [here](https://github.com/soumith/cudnn.torch).
 - Install the following packages for Python 2.7: 
 ```
 pip install numpy h5py
@@ -40,6 +41,8 @@ git lfs install
 ```
 export CUDNN_PATH="path_to_cudnn/lib64/libcudnn.so"
 ```
+
+- Or instead of the previous step you can copy the cuDNN library files into /usr/local/cuda/lib64/ or to the corresponding folders in the CUDA directory.
 
 ## Quickstart (AMR Generation)
 You can generate text from AMR graphs using our pre-trained model on 20M sentences from Gigaword, in two different ways:
