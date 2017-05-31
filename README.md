@@ -48,12 +48,12 @@ export CUDNN_PATH="path_to_cudnn/lib64/libcudnn.so"
 You can generate text from AMR graphs using our pre-trained model on 20M sentences from Gigaword, in two different ways:
 - By running an interactive tool that reads input from `stdin`:
 ```
-./predict_amr_single.sh [stripped|full|anonymized]
+./generate_amr_single.sh [stripped|full|anonymized]
 ```
 
 - By running the prediction on a single file, which contains an AMR graph per line:
 ```
-./predict_amr.sh input_file [stripped|full|anonymized]
+./generate_amr.sh input_file [stripped|full|anonymized]
 ```
 
 You can optionally provide an argument that tells the system to accept either `full` AMR as described in the [annotation guidelines](https://github.com/amrisi/amr-guidelines/blob/master/amr.md), or a `stripped` version, which removes variables, senses, parentheses from leaves, and assumes a simpler markup for Named Entities, date mentions, and numbers. You can also provide the input in `anonymized` format, i.e., similar to `stripped` but with Named Entities, date mentions, and numbers anonymized.
@@ -77,8 +77,8 @@ For full details and more examples, see [here]().
 
 ## Details
 
-### Prediction Options (predict_amr.sh, predict_amr_single.sh)
-- `interactive_mode [0,1]`: Set `0` for predicting from a file, or `1` to predict from `stdin`.
+### Generation Options (generate_amr.sh, generate_amr_single.sh)
+- `interactive_mode [0,1]`: Set `0` for generating from a file, or `1` to generate from `stdin`.
 - `model [str]`: The path to the trained model.
 - `input_type [stripped|full]`: Set `full` for standard AMR graph input, or `stripped` which expects AMR graphs with no variables, senses, parentheses from leaves, and assumes a simpler markup for Named Entities (for more details and examples, see [here]()).
 - `src_file [str]`: The path to the input file that contains AMR graphs, one per line.

@@ -26,6 +26,7 @@ cmd:option('-src_dict', 'data/demo.src.dict', [[Path to source vocabulary (*.src
 cmd:option('-targ_dict', 'data/demo.targ.dict', [[Path to target vocabulary (*.targ.dict file)]])
 cmd:option('-feature_dict_prefix', 'data/demo', [[Prefix of the path to features vocabularies (*.feature_N.dict files)]])
 cmd:option('-char_dict', 'data/demo.char.dict', [[If using chars, path to character vocabulary (*.char.dict file)]])
+cmd:option('-port', 4447, [[port to use for communicating with demo server]])
 
 -- beam search options
 cmd:option('-beam', 5, [[Beam size]])
@@ -46,7 +47,7 @@ cmd:option('-n_best', 1, [[If > 1, it will also output an n_best list of decoded
 cmd:option('-gpuid', -1, [[ID of the GPU to use (-1 = use CPU)]])
 cmd:option('-gpuid2', -1, [[Second GPU ID]])
 cmd:option('-interactive_mode', 0, [[input from stdin]])
-cmd:option('-input_type', 'full', [[Input can be either 'stripped' AMR (no brackets around leaf nodes, simpler NE and date format) or 'full' (Normal AMR) ]])
+cmd:option('-input_type', 'full', [[Input can be either 'stripped' AMR (no brackets around leaf nodes, simpler NE and date format), 'full' (Normal AMR) or 'text' for AMR Parsing]])
 cmd:option('-cudnn', 0, [[If using character model, this should be = 1 if the character model was trained using cudnn]])
 
 cmd:option('-rescore', '', [[use specified metric to select best translation in the beam, available: bleu, gleu]])
