@@ -31,11 +31,7 @@ pip install numpy h5py
 
 *(Only for downloading the pretrained models)*
 
-- Install the Git LFS client from [here](https://git-lfs.github.com/) **BEFORE** you clone the project. 
-- Then run the following command:
-```
-git lfs install
-```
+- Download and unzip the models from [here](https://drive.google.com/open?id=0B0e2gHbz7CcIWjVWbHR0ZV9vQzA)
 
 - Export the cuDNN library path (you can add it to your .bashrc or .profile):
 ```
