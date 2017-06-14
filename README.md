@@ -31,7 +31,7 @@ pip install numpy h5py
 
 *(Only for downloading the pretrained models)*
 
-- Download and unzip the models from [here](https://drive.google.com/open?id=0B0e2gHbz7CcIWjVWbHR0ZV9vQzA)
+- Download and unzip the models from [here](https://drive.google.com/file/d/0B0e2gHbz7CcIc0p1SjRhLVR2bTA/view?usp=sharing)
 
 - Export the cuDNN library path (you can add it to your .bashrc or .profile):
 ```
