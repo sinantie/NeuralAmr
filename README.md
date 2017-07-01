@@ -56,7 +56,7 @@ You can optionally provide an argument that tells the system to accept either `f
 
 An example using the `full` format:
 ```
-(h / hold-04 :ARG0 (p2 / person :ARG0-of (h2 / have-org-role-91 :ARG1 (c2 / country :name (n3 / name :op1 “United" op2: “States”)) :ARG2 (o / official)))  :ARG1 (m / meet-03 :ARG0 (p / person  :ARG1-of (e / expert-01) :ARG2-of (g / group-01))) :time (d2 / date-entity :year 2002 :month 1) :location (c / city  :name (n / name :op1 “New" :op2 “York”)))
+(h / hold-04 :ARG0 (p2 / person :ARG0-of (h2 / have-org-role-91 :ARG1 (c2 / country :name (n3 / name :op1 "United" :op2 "States")) :ARG2 (o / official)))  :ARG1 (m / meet-03 :ARG0 (p / person  :ARG1-of (e / expert-01) :ARG2-of (g / group-01))) :time (d2 / date-entity :year 2002 :month 1) :location (c / city  :name (n / name :op1 "New" :op2 "York")))
 ```
 
 The same example using the `stripped` format:
