@@ -8,3 +8,5 @@ tmp.src.txt
 *.swo
 s2sa/*.swp
 s2sa/*.swo
+java/AmrUtils/dist
+java/AmrUtils/build
