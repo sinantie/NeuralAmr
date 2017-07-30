@@ -87,35 +87,19 @@ public class AmrUtilsTest {
     }
 
     @Test
+    public void testNerAnonymize() {
+        System.out.println("testNerAnonymize");
+        String sent = "John Watson likes to generate complex graphs in Barcelona on 17 May 2017.";
+        String[] args = {"anonymizeText", "false", sent};
+        AmrUtils.main(args);
+    }
+   
+    @Test
     public void testDeAnonymize() {
         System.out.println("testDeAnonymize");
         String sent = "person_name_0 helped save num_0 cats in day_date-entity_0 month_name_date-entity_0 year_date-entity_0 .";
         String alignments = "person_name_0|||name_John_Pappas\tnum_0|||3\tyear_date-entity_0|||2016\tmonth_date-entity_0|||3\tday_date-entity_0|||4";
         String[] args = {"deAnonymizeText", "false", sent + "#" + alignments};
-        AmrUtils.main(args);
-    }
-
-//    @Test
-    public void testAnonymizeFullFileAmr() {
-        System.out.println("testAnonymizeFullFileAmr");
-        String input = "resources/sample-data/sample-amr.txt";
-        String[] args = {"anonymizeAmrFull", "true", input};
-        AmrUtils.main(args);
-    }
-
-//    @Test
-    public void testDeAnonymizeFullFile() {
-        System.out.println("testDeAnonymizeFullFile");
-        String input = "resources/sample-data/sample-amr.txt";
-        String[] args = {"deAnonymizeText", "true", input};
-        AmrUtils.main(args);
-    }
-
-    @Test
-    public void testNerAnonymize() {
-        System.out.println("testNerAnonymize");
-        String sent = "John Watson likes to generate complex graphs in Barcelona on 17 May 2017.";
-        String[] args = {"anonymizeText", "false", sent};
         AmrUtils.main(args);
     }
 
@@ -127,8 +111,16 @@ public class AmrUtilsTest {
         String[] args = {"deAnonymizeAmr", "false", amr + "#" + alignments};
         AmrUtils.main(args);
     }
-
-//    @Test
+    
+    @Test
+    public void testAnonymizeFullFileAmr() {
+        System.out.println("testAnonymizeFullFileAmr");
+        String input = "resources/sample-data/sample-amr.txt";
+        String[] args = {"anonymizeAmrFull", "true", input};
+        AmrUtils.main(args);
+    }
+    
+    @Test
     public void testAnonymizeFileText() {
         System.out.println("testAnonymizeFileText");
         String input = "resources/sample-data/sample-nl.txt";
@@ -137,12 +129,20 @@ public class AmrUtilsTest {
         AmrUtils.main(args);
     }
 
-//    @Test
+    @Test
     public void testDeAnonymizeAmrFile() {
         System.out.println("testDeAnonymizeAmrFile");
-        String input = "resources/sample-data/sample-nl.txt";
+        String input = "resources/sample-data/sample-amr.txt";
 
         String[] args = {"deAnonymizeAmr", "true", input};
+        AmrUtils.main(args);
+    }
+
+    @Test
+    public void testDeAnonymizeFullTextFile() {
+        System.out.println("testDeAnonymizeFullTextFile");
+        String input = "resources/sample-data/sample-nl.txt";
+        String[] args = {"deAnonymizeText", "true", input};
         AmrUtils.main(args);
     }
 

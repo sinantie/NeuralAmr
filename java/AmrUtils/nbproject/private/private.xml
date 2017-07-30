@@ -3,15 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/ikonstas/UW/AmrUtils/src/util/apps/AmrUtils.java</file>
-            <file>file:/Users/ikonstas/UW/AmrUtils/src/util/corpus/wrappers/AmrLinearize.java</file>
-            <file>file:/Users/ikonstas/UW/AmrUtils/settings.properties</file>
-            <file>file:/Users/ikonstas/UW/AmrUtils/test/util/apps/AmrUtilsTest.java</file>
-            <file>file:/Users/ikonstas/UW/AmrUtils/src/util/corpus/wrappers/AmrSentence.java</file>
-            <file>file:/Users/ikonstas/UW/AmrUtils/src/util/corpus/wrappers/AmrWrapper.java</file>
-            <file>file:/Users/ikonstas/UW/AmrUtils/src/util/server/NerServer.java</file>
-            <file>file:/Users/ikonstas/UW/AmrUtils/src/util/corpus/wrappers/AmrLinearizedSentence.java</file>
-            <file>file:/Users/ikonstas/UW/AmrUtils/src/util/corpus/wrappers/Amr.java</file>
+            <file>file:/Users/ikonstas/UW/NeuralAmr/java/AmrUtils/src/util/corpus/wrappers/GigawordWrapper.java</file>
+            <file>file:/Users/ikonstas/UW/NeuralAmr/java/AmrUtils/src/util/corpus/wrappers/Amr.java</file>
+            <file>file:/Users/ikonstas/UW/NeuralAmr/java/AmrUtils/src/util/apps/AmrUtils.java</file>
+            <file>file:/Users/ikonstas/UW/NeuralAmr/java/AmrUtils/test/util/apps/AmrUtilsTest.java</file>
         </group>
     </open-files>
 </project-private>

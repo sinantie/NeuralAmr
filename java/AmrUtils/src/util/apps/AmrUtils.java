@@ -1,5 +1,6 @@
 package util.apps;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -119,9 +120,11 @@ public class AmrUtils {
         String id = "";
         AmrLinearizedSentence amrSentence;
         boolean failedToParse;
+        if(input.isEmpty()) {
+            return " # ";
+        }
         if(strippedAmr) {
-            input = input.replaceAll("\n", " ").replaceAll("\\p{Space}+", " ");        
-            input = input.replaceAll("\\(", "( ").replaceAll("\\)", " )").replaceAll(" +", " ");
+            input = normalizeAmr(input);
             List<String> tokens = Arrays.asList(input.split(" "));
             tokens = collateNames(tokens);
             if(checkBrackets(tokens) && checkStructure(tokens)) {
@@ -149,6 +152,9 @@ public class AmrUtils {
     }    
     
     private String anonymizeSingleText(String input, GigawordWrapper anonymizer) {
+        if(input.isEmpty()) {
+            return " # ";
+        }
         input = normalizePunctuation(input);                
         NerSentence nerSentence = anonymizer.anonymizeRaw(input);        
         return nerSentence.toStringNlAnonOnly() + "#" + alignmentsToString(nerSentence.getAnonymizationAlignments());
@@ -156,20 +162,22 @@ public class AmrUtils {
         
     private void deAnonymizeFile(String path, boolean isText) {
         try (PrintWriter deAnonymizedWriter = new PrintWriter(new FileOutputStream(path + ".pred"))) {
-            zip(Files.lines(Paths.get(path + ".pred.anonymized")),
-                Files.lines(Paths.get(path + ".alignments")), (a, b) -> a + "#" + b).forEach(l -> deAnonymizedWriter.println(isText ? deAnonymizeSingle(l, true) : expandStrippedToFull(deAnonymizeSingle(l, false)).split("#")[0] ));
+            String anonymizedPath = new File(path + ".pred.anonymized").exists() ? path + ".pred.anonymized" : path + ".anonymized";
+            zip(Files.lines(Paths.get(anonymizedPath)),
+                Files.lines(Paths.get(path + ".alignments")), (a, b) -> a + "#" + b).forEach(l -> deAnonymizedWriter.println(isText ? deAnonymizeSingle(l, true) : expandStrippedToFull(deAnonymizeSingle(l, false)) ));
+//                                deAnonymizeSingle(l, false)).split("#")[0] ));
         } catch(IOException ex) {
             
         }
     }     
     
     private String deAnonymizeSingle(String input, boolean isText) {
-        String[] inputAligns = input.split("#");
-        if(inputAligns.length > 1) {
+        String[] inputAligns = input.split("#");        
+        if(inputAligns.length > 1 && !(inputAligns[0].isEmpty() || inputAligns[0].equals(" "))) {
             Map<String, AnonymizationAlignment> alignments = getAlignmentsFromString(inputAligns[1]);
           return isText ? deAnonymizeSingleText(inputAligns[0], alignments) : deAnonymizeSingleAmr(inputAligns[0], alignments);
         } else {
-            return inputAligns[0];
+            return normalizeAmr(inputAligns[0]);
         }        
     }
     
@@ -205,8 +213,7 @@ public class AmrUtils {
     }
     
     private String deAnonymizeSingleAmr(String input, Map<String, AnonymizationAlignment> map) {        
-        input = input.replaceAll("\n", " ").replaceAll("\\p{Space}+", " ");        
-        input = input.replaceAll("\\(", "( ").replaceAll("\\)", " )").replaceAll(" +", " ");
+        input = normalizeAmr(input);
         List<String> tokens = Arrays.asList(input.split(" "));        
         if(checkBrackets(tokens) && checkStructure(tokens)) {                        
             return String.join(" ", deAnonymizeAmrTokens(tokens, map));            
@@ -216,6 +223,9 @@ public class AmrUtils {
     }
         
     private String expandStrippedToFull(String input) {
+        if(input.isEmpty() || input.equals(" ")) {
+            return " # ";
+        }
         if(input.startsWith("FAILED_TO_PARSE")) {
             return input;
         }        
@@ -286,7 +296,8 @@ public class AmrUtils {
                 return anonymizationAlignmentToString(alignment);
             }
         } // try the first closest matching key without the number
-        String keyWithoutNum = key.substring(0, key.lastIndexOf("_"));
+        int lastIndex = key.lastIndexOf("_");
+        String keyWithoutNum = key.substring(0, lastIndex != -1 ? lastIndex: key.length());
         for(Map.Entry<String, AnonymizationAlignment> entries : map.entrySet()) {
             if(entries.getKey().startsWith(keyWithoutNum)) {
                 return anonymizationAlignmentToString(entries.getValue());
@@ -311,6 +322,11 @@ public class AmrUtils {
         return input.replaceAll("!", ".");
     }
     
+    private String normalizeAmr(String input) {
+        input = input.replaceAll("\n", " ").replaceAll("\\p{Space}+", " ");        
+        input = input.replaceAll("\\(", "( ").replaceAll("\\)", " )").replaceAll(" +", " ");
+        return input;
+    }
     private Map<String, AnonymizationAlignment> getAlignmentsFromString(String inputAligns) {
         return Stream.of(inputAligns.split("\t")).map(str -> {
                 String anonAmr[] = str.split("[|]{3}"); 
