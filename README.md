@@ -40,7 +40,9 @@ export CUDNN_PATH="path_to_cudnn/lib64/libcudnn.so"
 
 - Or instead of the previous step you can copy the cuDNN library files into /usr/local/cuda/lib64/ or to the corresponding folders in the CUDA directory.
 
-## Quickstart (AMR Generation)
+## Usage 
+
+### AMR Generation
 You can generate text from AMR graphs using our pre-trained model on 20M sentences from Gigaword, in two different ways:
 - By running an interactive tool that reads input from `stdin`:
 ```
@@ -71,17 +73,111 @@ hold :ARG0 ( person :ARG0-of ( have-org-role :ARG1 location_name_0 :ARG2 officia
 
 For full details and more examples, see [here](). 
 
-## Details
+### AMR Parsing
 
-### Generation Options (generate_amr.sh, generate_amr_single.sh)
+You can also parse text to the corresponding AMR graph, using our pre-trained model on 20M sentences from Gigaword.
+
+Similarly to AMR generation, you can parse text in two ways:
+
+- By running an interactive tool that reads text from `stdin`:
+```
+./parse_amr_single.sh [text|textAnonymized]
+```
+
+- By running the prediction on a single file, which contains a sentence per line:
+```
+./parse_amr.sh input_file [text|textAnonymized]
+```
+
+You can optionally provide an argument to the scripts that inform them to either accept `text` and perform NE recognition and anonymization on it, or bypass this process entirely (`textAnonymized`).
+
+### Script Options (generate_amr.sh, generate_amr_single.sh, parse_amr.sh, parse_amr_single.sh)
 - `interactive_mode [0,1]`: Set `0` for generating from a file, or `1` to generate from `stdin`.
 - `model [str]`: The path to the trained model.
-- `input_type [stripped|full]`: Set `full` for standard AMR graph input, or `stripped` which expects AMR graphs with no variables, senses, parentheses from leaves, and assumes a simpler markup for Named Entities (for more details and examples, see [here]()).
+- `input_type [stripped|full]` (**AMR Generation only**): Set `full` for standard AMR graph input, or `stripped` which expects AMR graphs with no variables, senses, parentheses from leaves, and assumes a simpler markup for Named Entities (for more details and examples, see [here]()).
 - `src_file [str]`: The path to the input file that contains AMR graphs, one per line.
 - `gpuid [int]`: The GPU id number.
 - `src_dict, targ_dict [str]`: Path to source and target dictionaries. These are usually generated during preprocessing of the corpus. ==Note==: `src_dict` and `targ_dict` paths need to be reversed when generating text or parsing to AMR.
 - `beam [int]`: The beam size of the decoder (default is 5).
 - `replace_unk [0,1]`: Replace unknown words with either the input token that has the highest attention weight, or the word that maps to the input token as provided in `srctarg_dict`.
 - `srctarg_dict [str]`: Path to source-target dictionary to replace unknown tokens. Each line should be a source token and its corresponding target token, separated by `|||` (see `resources/training-amr-nl-alignments.txt`).
-- `max_sent_l [str]`: Maximum sentence length (default is 507, i.e., the longest input AMR graph in number of tokens from the dev set). If any of the sequences in `src_file` are longer than this it will error out.
+- `max_sent_l [str]`: Maximum sentence length (default is 507, i.e., the longest input AMR graph or sentence (depending on the task) in number of tokens from the dev set). If any of the sequences in `src_file` are longer than this it will error out.
+ 
+
+### (De-)Anonymization Process
+The source code for the whole anonymization/deanonymization pipeline is provided under the `java/AmrUtils` folder. You can rebuild the code by running the script:
+
+```
+./rebuild_AmrUtils.sh
+```
+
+This should create the executable `lib/AmrUtils.jar`.
+The (de-)anonymization tools are generally controlled using the following shell script command (==Note== that it is automatically being called inside the lua code when parsing/generating, so generally you don't need to deal with it when running the scripts described above). The first argument denotes the specific (de-)anonymization to perform, the second argument specifies whether the input comes either from stdin or from a file, where each input is provided one per line:
+
+```
+./anonDeAnon_java.sh anonymizeAmrStripped|anonymizeAmrFull|deAnonymizeAmr|anonymizeText|deAnonymizeText input_isFile[true|false] input
+```
+
+- ==Note==: In order to anonymize text sentences, you need to run the Stanford NER server first (you can just execute it in the background):
+   ```
+   ./nerServer.sh&
+   ```
+
+   Optionally you can provide a port number as an argument.
+
+
+There are four main operations you can perform with the tools, namely anonymization of AMR graphs, anonymization of text sentences, deAnonymization of (predicted) sentences, and deAnonymization of (predicted) AMR graphs.:
+
+- Anonymize an AMR graph (`anonymizeAmrStripped, anonymizeAmrFull`)
+In this case, you provide an input representing a stripped or full AMR graph, and the script outputs the **anonymized graph** (in the case of full it also strips it down, i.e., removes variable names, instance-of relations, most brackets, and simplifies NEs/dates/number subgraphs of the input), the **anonymization alignments** (useful for deAnonymizing the corresponding predicted sentence later), and the nodes/edges of the graph in an un-ordered JSON format (useful for visualization tools such as [vis.js](http://visjs.org/)). The three outputs are delimited using the special character `#`. For example:
+   ```
+   ./anonDeAnon_java.sh anonymizeAmrFull false "(h / hello :arg1 (p / person :name (n / name :op1 \"John\" :op2 \"Doe\")))"
+   ```
+   should give the output:
+   ```
+   hello :arg1 person_name_0#person_name_0|||name_John_Doe#
+   "nodes":[{"id":1,"label":"hello"},{"id":2,"label":"person"},{"id":3,"label":"name"},{"id":4,"label":"\"John\""},{"id":5,"label":"\"Doe\""}],
+   "edges":[{"from":1,"to":2,"label":"arg1"},{"from":2,"to":3,"label":"name"},{"from":3,"to":4,"label":"op1"},{"from":3,"to":5,"label":"op2"}]
+   ```
+   
+   Anonymization alignments have the format:
+   ```
+   amr-anonymized-token|||type_concatenated-AMR-tokens
+   ```    
+   Finally, multiple anonymization alignments for the same sentence, are tab-delimeted.
+
+- Anonymize a text sentence (`anonymizeText`)
+   Remember that you need to have the NER server running, as explained above. In this example you simply provide the sentence as in input. For example:
+   ```
+   ./anonDeAnon_java.sh anonymizeText false "My name is John Doe"
+   ```
+   should give the output:
+   ```
+   my name is person_name_0#person_name_0|||John Doe
+   ```
+   Note that the anonymization alignments from text are slightly different than the ones from AMR graphs; the second part is a span of the text separated with space.
+
+- De-anonymize an AMR graph (`deAnonymizeAmr`)
+   In this case, you provide an input representing a stripped AMR graph, as well as the corresonding anonymization alignments provided from a previous run of the script using the ==anonymizeText== option, **delimited** by `#`, and the script outputs the de-anonymized AMR graph, as well as the nodes/edges of the graph in an un-ordered JSON format  (useful for visualization tools such as [vis.js](http://visjs.org/)). For example:
+   ```
+   ./anonDeAnon_java.sh deAnonymizeAmr false "hello :arg1 person_name_0#person_name_0|||John Doe"
+   ```
+   should give the output:
+   ```
+   (h / hello :arg1 (p / person :name (n / name :op1 "John" :op2 "Doe")))#
+   "nodes":[{"id":1,"label":"hello"},{"id":2,"label":"person"},{"id":3,"label":"name"},{"id":4,"label":"\"John\""},{"id":5,"label":"\"Doe\""}],
+   "edges":[{"from":1,"to":2,"label":"arg1"},{"from":2,"to":3,"label":"name"},{"from":3,"to":4,"label":"op1"},{"from":3,"to":5,"label":"op2"}]
+   ```
+
+- De-anonymize a text sentence (`deAnonymizeText`)
+  Simply, provide the anonymized (predicted) text sentence, along with the anonymization alingmnets produced from a previous run of the tool using the ==anonymizeAmrFull/Stripped== option, **delimited** by `#`. The script should output the de-anonymized text sentence. For example:
+   ```
+   ./anonDeAnon_java.sh deAnonymizeText false "my name is person_name_0#person_name_0|||name_John_Doe"
+   ```
+   should give the output:
+   ```
+   my name is John Doe
+   ```
+
+Finally, when running the tool with the input being in a file (provide the path as the 3rd argument of the script, and set the 2nd argument to true), you always need to provide the **original** files containing the AMR graphs/sentences only. The tool will then automatically create the corresponding anonymized file (`*.anonymized`), as well as the anonymization alignments' file (`*.alignments`) during anonymization. Similarly, when de-anonymizing it will automatically look for the (`*.anonymized`, and `*.alignments`) files and create a new resulting file with the extension (`*.pred`).
 
