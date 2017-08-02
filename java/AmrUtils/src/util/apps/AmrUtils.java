@@ -78,7 +78,7 @@ public class AmrUtils {
         if(isInputFile) {
             deAnonymizeFile(input, false);
         } else {
-            return expandStrippedToFull(deAnonymizeSingle(input, false));
+            return expandStrippedToFull(deAnonymizeSingle(input, false), true);
         }
         return "";
     }
@@ -166,7 +166,7 @@ public class AmrUtils {
         try (PrintWriter deAnonymizedWriter = new PrintWriter(new FileOutputStream(path + ".pred"))) {
             String anonymizedPath = new File(path + ".pred.anonymized").exists() ? path + ".pred.anonymized" : path + ".anonymized";
             zip(Files.lines(Paths.get(anonymizedPath)),
-                Files.lines(Paths.get(path + ".alignments")), (a, b) -> a + "#" + b).forEach(l -> deAnonymizedWriter.println(isText ? deAnonymizeSingle(l, true) : expandStrippedToFull(deAnonymizeSingle(l, false)) ));
+                Files.lines(Paths.get(path + ".alignments")), (a, b) -> a + "#" + b).forEach(l -> deAnonymizedWriter.println(isText ? deAnonymizeSingle(l, true) : expandStrippedToFull(deAnonymizeSingle(l, false), false) ));
 //                                deAnonymizeSingle(l, false)).split("#")[0] ));
         } catch(IOException ex) {
             
@@ -224,7 +224,7 @@ public class AmrUtils {
         }                
     }
         
-    private String expandStrippedToFull(String input) {
+    private String expandStrippedToFull(String input, boolean outputVisJs) {
         if(input.isEmpty() || input.equals(" ")) {
             return " # ";
         }
@@ -242,7 +242,7 @@ public class AmrUtils {
         amrSentence = new AmrLinearizedSentence(id, "", root, dictionaries, Collections.EMPTY_MAP, "dfs");
         boolean failedToParse = amrSentence.getAmr().isFailedToParse();
         if (!failedToParse) {            
-            return root.pp().trim() + "#" + toVisJs(((AmrLinearize)amrSentence.getAmr()).getGraph());
+            return root.pp().trim() + (outputVisJs ? "#" + toVisJs(((AmrLinearize)amrSentence.getAmr()).getGraph()) : "");
         }
         return "FAILED_TO_PARSE#" + errorMessage;
     }
