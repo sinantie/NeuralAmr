@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -151,11 +153,11 @@ public class AmrUtils {
         return "FAILED_TO_PARSE#" + errorMessage;
     }    
     
-    private String anonymizeSingleText(String input, GigawordWrapper anonymizer) {
-        if(input.isEmpty()) {
+    private String anonymizeSingleText(String input, GigawordWrapper anonymizer) {        
+        input = normalizePunctuation(input);
+        if(input.isEmpty() || input.equals("?")) {
             return " # ";
-        }
-        input = normalizePunctuation(input);                
+        }                       
         NerSentence nerSentence = anonymizer.anonymizeRaw(input);        
         return nerSentence.toStringNlAnonOnly() + "#" + alignmentsToString(nerSentence.getAnonymizationAlignments());
     }
@@ -319,6 +321,8 @@ public class AmrUtils {
     }
      
     private String normalizePunctuation(String input) {
+        Charset ascii = Charset.forName("ISO-8859-1");
+        input = new String(input.getBytes(ascii), ascii); 
         return input.replaceAll("!", ".");
     }
     

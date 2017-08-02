@@ -97,7 +97,7 @@ public class NamedEntityRecognizer implements NamedEntityRecognizerInterface {
 
     public static void main(String[] args) {
 //        String text = "Chinese officials stated that the launch of the nigcomsat- 1 aboard a Long March 3 B rocket on May 14 , 2007 represented a commercial challenge .";
-        String text = "John bought 3 cakes for $ 50 dollars at Starbucks in Mexico on 17 September 2012 .";
+        String text = "The hot line directed them to a gas station 1 1/2 kilometers (about a mile) away, Iyoob said.";
         int length = text.split(" ").length;
         NamedEntityRecognizer spt = new NamedEntityRecognizer(true);
         Pair<List<String>, List<String>> tokensNers = spt.process(text, length);
