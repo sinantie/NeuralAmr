@@ -323,7 +323,7 @@ public class AmrUtils {
     private String normalizePunctuation(String input) {
         Charset ascii = Charset.forName("ISO-8859-1");
         input = new String(input.getBytes(ascii), ascii); 
-        return input.replaceAll("!", ".");
+        return input.replaceAll("!", ".").replaceAll("#", "-");
     }
     
     private String normalizeAmr(String input) {

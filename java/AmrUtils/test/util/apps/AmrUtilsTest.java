@@ -123,8 +123,8 @@ public class AmrUtilsTest {
     @Test
     public void testAnonymizeFileText() {
         System.out.println("testAnonymizeFileText");
-//        String input = "resources/sample-data/sample-nl.txt";
-        String input = "/Users/ikonstas/Desktop/bug.txt";
+        String input = "resources/sample-data/sample-nl.txt";
+//        String input = "/Users/ikonstas/Desktop/bug.txt";
 
         String[] args = {"anonymizeText", "true", input};
         AmrUtils.main(args);
