@@ -66,7 +66,7 @@ public class AmrUtilsTest {
     /**
      * Test of main method, of class AmrUtils.
      */
-    @Test
+//    @Test
     public void testAnonymizeFull() {
         System.out.println("testAnonymizeFull");
         String input = "(h / hold-04 :ARG0 (p2 / person :ARG0-of "
@@ -78,7 +78,7 @@ public class AmrUtilsTest {
         AmrUtils.main(args);
     }
 
-    @Test
+//    @Test
     public void testAnonymizeStripped() {
         System.out.println("testAnonymizeStripped");
         String input = "help :arg0 (person :name \"Mr. T\") :arg1 ( save :arg0 world ) :time ( date-entity :year 2016 :month 3 :day 4)";
@@ -86,15 +86,15 @@ public class AmrUtilsTest {
         AmrUtils.main(args);
     }
 
-    @Test
+//    @Test
     public void testNerAnonymize() {
         System.out.println("testNerAnonymize");
-        String sent = "John Watson likes to generate complex graphs in Barcelona on 17 May 2017.";
+        String sent = "'Unprecedented' violence sweeps Pakistan in first quarter: CRSS";
         String[] args = {"anonymizeText", "false", sent};
         AmrUtils.main(args);
     }
    
-    @Test
+//    @Test
     public void testDeAnonymize() {
         System.out.println("testDeAnonymize");
         String sent = "person_name_0 helped save num_0 cats in day_date-entity_0 month_name_date-entity_0 year_date-entity_0 .";
@@ -103,7 +103,7 @@ public class AmrUtilsTest {
         AmrUtils.main(args);
     }
 
-    @Test
+//    @Test
     public void testAmrDeAnonymize() {
         System.out.println("testAmrDeAnonymize");
         String amr = "meet-01 :polarity - :arg0 person_name_0 :location country-region_name_2 :arg1 ( man :quant num_0) :frequency ( rate-entity :arg2 ( temporal-quantity temporal-quantity_num_0 :unit year )  ) :arg2 ( stage :ord ( ordinal-entity ordinal-entity_num_1 )) :time ( date-entity year_date-entity_0 month_date-entity_0 day_date-entity_0 )";
@@ -112,7 +112,7 @@ public class AmrUtilsTest {
         AmrUtils.main(args);
     }
     
-    @Test
+//    @Test
     public void testAnonymizeFullFileAmr() {
         System.out.println("testAnonymizeFullFileAmr");
         String input = "resources/sample-data/sample-amr.txt";
@@ -120,7 +120,7 @@ public class AmrUtilsTest {
         AmrUtils.main(args);
     }
     
-    @Test
+//    @Test
     public void testAnonymizeFileText() {
         System.out.println("testAnonymizeFileText");
         String input = "resources/sample-data/sample-nl.txt";
@@ -139,7 +139,7 @@ public class AmrUtilsTest {
         AmrUtils.main(args);
     }
 
-    @Test
+//    @Test
     public void testDeAnonymizeFullTextFile() {
         System.out.println("testDeAnonymizeFullTextFile");
         String input = "resources/sample-data/sample-nl.txt";

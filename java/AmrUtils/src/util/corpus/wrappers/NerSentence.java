@@ -36,7 +36,7 @@ public class NerSentence extends AmrSentence {
     public List<String> getTokens() {
         return tokens;
     }
-
+    
     public String toStringNlOnly() {
         return sentence.toLowerCase();
     }

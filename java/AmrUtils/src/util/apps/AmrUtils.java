@@ -164,6 +164,7 @@ public class AmrUtils {
             return " # ";
         }
         NerSentence nerSentence = anonymizer.anonymizeRaw(input);
+        normalizeAnonymizedSentence(nerSentence);
         return nerSentence.toStringNlAnonOnly() + "#" + alignmentsToString(nerSentence.getAnonymizationAlignments());
     }
 
@@ -185,7 +186,7 @@ public class AmrUtils {
             return isText ? deAnonymizeSingleText(inputAligns[0], alignments) : deAnonymizeSingleAmr(inputAligns[0], alignments);
         } else if (isText) {
             return inputAligns[0];
-        } else if (isValidAmr(inputAligns[0])) {
+        } else if (isValidAmr(normalizeAmr(inputAligns[0]))) {
             return normalizeAmr(inputAligns[0]);
         } else {
             return "FAILED_TO_PARSE#" + errorMessage;
@@ -350,6 +351,10 @@ public class AmrUtils {
         return input;
     }
 
+    private void normalizeAnonymizedSentence(NerSentence input) {
+        input.setAnonymizedSentence(input.getAnonymizedSentence().replaceAll("`", "'"));
+    }
+    
     private Map<String, AnonymizationAlignment> getAlignmentsFromString(String inputAligns) {
         return Stream.of(inputAligns.split("\t")).map(str -> {
             String anonAmr[] = str.split("[|]{3}");
