@@ -181,13 +181,17 @@ public class AmrUtils {
 
     private String deAnonymizeSingle(String input, boolean isText) {
         String[] inputAligns = input.split("#");
-        if (inputAligns.length > 1 && !(inputAligns[0].isEmpty() || inputAligns[0].equals(" "))) {
-            Map<String, AnonymizationAlignment> alignments = getAlignmentsFromString(inputAligns[1]);
-            return isText ? deAnonymizeSingleText(inputAligns[0], alignments) : deAnonymizeSingleAmr(inputAligns[0], alignments);
-        } else if (isText) {
-            return inputAligns[0];
-        } else if (isValidAmr(normalizeAmr(inputAligns[0]))) {
-            return normalizeAmr(inputAligns[0]);
+        if(!(inputAligns.length == 0 || inputAligns[0].isEmpty() || inputAligns[0].equals(" "))) {
+            if (inputAligns.length > 1) {
+                Map<String, AnonymizationAlignment> alignments = getAlignmentsFromString(inputAligns[1]);
+                return isText ? deAnonymizeSingleText(inputAligns[0], alignments) : deAnonymizeSingleAmr(inputAligns[0], alignments);
+            } else if (isText) {
+                return inputAligns[0];
+            } else {
+                return deAnonymizeSingleAmr(inputAligns[0], Collections.EMPTY_MAP);
+            }
+//        } else if (isValidAmr(normalizeAmr(inputAligns[0]))) {
+//            return normalizeAmr(inputAligns[0]);
         } else {
             return "FAILED_TO_PARSE#" + errorMessage;
         }
@@ -267,16 +271,18 @@ public class AmrUtils {
             String token = tokens.get(i);
             if (token.contains("name_")) {
                 out.addAll(processName(token, i == 0 || !tokens.get(i - 1).equals("("), map));
-            } else if (token.contains("num")) {
+            } else if (token.contains("num_")) {
                 if (token.contains("quantity")) {
                     out.add(":quant");
                 } else if (token.contains("entity")) {
                     out.add(":value");
                 }
-                out.addAll(getAmrValue(token, map));
+//                out.addAll(getAmrValue(token, map));
+                out.add(getAmrValue(token, map).get(0).split(" ")[0]);
             } else if (token.contains("date-entity_")) {
                 out.add(":" + token.substring(0, token.indexOf("_")));
-                out.addAll(getAmrValue(token, map));
+//                out.addAll(getAmrValue(token, map));
+                out.add(getAmrValue(token, map).get(0).split(" ")[0]);
             } else {
                 out.add(token);
             }
@@ -352,14 +358,14 @@ public class AmrUtils {
     }
 
     private void normalizeAnonymizedSentence(NerSentence input) {
-        input.setAnonymizedSentence(input.getAnonymizedSentence().replaceAll("`", "'"));
+        input.setAnonymizedSentence(input.getAnonymizedSentence().replaceAll("`", "'").replaceAll("#", "-"));
     }
     
     private Map<String, AnonymizationAlignment> getAlignmentsFromString(String inputAligns) {
         return Stream.of(inputAligns.split("\t")).map(str -> {
             String anonAmr[] = str.split("[|]{3}");
             return new AmrAnonymizationAlignment(anonAmr[0], anonAmr[1]);
-        }).collect(Collectors.toMap(AmrAnonymizationAlignment::getAnonymizedToken, Function.identity()));
+        }).collect(Collectors.toMap(AmrAnonymizationAlignment::getAnonymizedToken, Function.identity(), (oldVal, newVal) -> oldVal));
     }
 
     private String alignmentsToString(Collection<AmrAnonymizationAlignment> alignments) {
@@ -482,7 +488,7 @@ public class AmrUtils {
             } else {
                 String role = currentToken;
                 AmrAlignment roleAlignment = new AmrAlignment(AmrAlignment.TokenType.ROLE, role);
-                String nextToken = graph.get(++pos);
+                String nextToken = graph.get(++pos);                
                 if (isConcept(nextToken)) {
                     AmrAlignment conceptAlignment = new AmrAlignment(AmrAlignment.TokenType.CONCEPT, nextToken);
                     parent.add(new AmrNode(getVar(nextToken), nextToken, "", role, conceptAlignment, roleAlignment));
@@ -495,7 +501,7 @@ public class AmrUtils {
                 } else {
                     errorMessage = "Couldn't convert to full AMR graph.";
                 }
-            }
+            }                            
             pos++;
         }
         return pos;

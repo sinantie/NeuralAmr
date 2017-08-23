@@ -106,8 +106,8 @@ public class AmrUtilsTest {
 //    @Test
     public void testAmrDeAnonymize() {
         System.out.println("testAmrDeAnonymize");
-        String amr = "meet-01 :polarity - :arg0 person_name_0 :location country-region_name_2 :arg1 ( man :quant num_0) :frequency ( rate-entity :arg2 ( temporal-quantity temporal-quantity_num_0 :unit year )  ) :arg2 ( stage :ord ( ordinal-entity ordinal-entity_num_1 )) :time ( date-entity year_date-entity_0 month_date-entity_0 day_date-entity_0 )";
-        String alignments = "ordinal-entity_num_1|||3\tnum_0|||1000\tperson_name_0|||name_John_Pappas\tperson_name_1|||name_George_Benson\tcountry-region_name_3|||Attica\tday_date-entity_0|||25\tyear_date-entity_0|||2017\tmonth_name_date-entity_0|||4\ttemporal-quantity_num_0|||1";
+        String amr = "and :op1 ( be-located-at-91 :arg1 country_name_0 :arg2 ( group :mod country_name_1 ) ) :op2 ( play-08 :arg0 country :arg1 ( and :op1 country_name_1 :op2 country_name_2 :op3 country_name_3 ) :time       ( date-entity month_date-entity_0 day_date-entity_0 ) :mod respective )";
+        String alignments = "country_name_0|||Tajikistan\tcountry_name_2|||Latvia\tcountry_name_3|||Belarus \tday_date-entity_0|||18\tday_date-entity_0|||19\tcountry_name_1|||Estonia\tmonth_name_date-entity_0|||1\tnum_0|||21";
         String[] args = {"deAnonymizeAmr", "false", amr + "#" + alignments};
         AmrUtils.main(args);
     }
@@ -133,7 +133,8 @@ public class AmrUtilsTest {
     @Test
     public void testDeAnonymizeAmrFile() {
         System.out.println("testDeAnonymizeAmrFile");
-        String input = "resources/sample-data/sample-amr.txt";
+//        String input = "resources/sample-data/sample-amr.txt";
+        String input = "/Users/ikonstas/Desktop/cmu-summer-school/ori.txt";
 
         String[] args = {"deAnonymizeAmr", "true", input};
         AmrUtils.main(args);
