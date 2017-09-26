@@ -30,7 +30,7 @@ public abstract class Application
     {
         try
         {
-            Constructor cons = Class.forName("uk.ac.ed.gen.corpus." +
+            Constructor cons = Class.forName("util.corpus." +
                                Utils.toCamelCasing(corpusString) + "Corpus").
                                getConstructor(Settings.class, Database.class,
                                               String.class);            
