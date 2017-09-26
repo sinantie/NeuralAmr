@@ -181,3 +181,39 @@ In this case, you provide an input representing a stripped or full AMR graph, an
 
 Finally, when running the tool with the input being in a file (provide the path as the 3rd argument of the script, and set the 2nd argument to true), you always need to provide the **original** files containing the AMR graphs/sentences only. The tool will then automatically create the corresponding anonymized file (`*.anonymized`), as well as the anonymization alignments' file (`*.alignments`) during anonymization. Similarly, when de-anonymizing it will automatically look for the (`*.anonymized`, and `*.alignments`) files and create a new resulting file with the extension (`*.pred`).
 
+#### (De)-Anonymizing Parallel Corpus (e.g., LDC versions)
+
+If you have a parallel corpus, such as the LDC2015E86 that was used to train the models in this work, or [Little Prince](https://amr.isi.edu/download.html), which is included in this repository as well for convenience, then you need to follow a slightly different procedure. 
+
+The idea is to use alignments between the AMR graphs and corresponding text, in order to accurately identify the entities that will get anonymized. The alignments can be either obtained using the [unsupervised aligner](https://www.isi.edu/~damghani/papers/Aligner.zip) by Nima Pourdamghani, or [JAMR](https://github.com/jflanigan/jamr) by Jeff Flanigan. If you are using the annotated LDC versions, then they should already be automatically aligned using the first aligner (use files under the folder `alignments/`). The code in this repository supports either or both types of alignments. 
+
+1. In order to get alignments from JAMR on the provided Little Prince corpus do the following:
+
+- First, concatenate the training, dev and test splits to a single file (e.g., `little-prince-all.txt`) for convenience.
+- Change to the path you downloaded and installed JAMR, and execute the command:
+```
+scripts/ALIGN.sh path/to/NeuralAmr/resources/sample-data/little-prince/little-prince-all.txt > /path/to/NeuralAmr/resources/sample-data/little-prince/jamr-alignments-all.txt
+```
+
+2. Open `settings.properties` and make sure `amr.down.base` and `amr.jamr.alignments` point to the right folders (they point to Little Prince directory by default). 
+You can also enable or disable some pre-processing functionalities from here as well, such as whether to use Named Entity clusters (person, organization, location, and other instead of the fine-grained AMR categories; you can alter the clusters through the property `amr.concepts.ne`) via the property `amr.down.useNeClusters` (default is `true` for preparing the corpus for Generation, and should be set to `false` for Parsing). Similarly, you might want to enable output of senses on concepts (e.g., `say-01`, instead of just `say`) via the property `amr.down.outputSense` (default is `false` for Generation and `true` for Parsing).
+Another important property is `amr.down.input` which specifies which portion of the corpus to process (default is `training,dev,test` which are the folder names in the LDC corpora and Little Prince).
+
+3. Preprocess and anonymize the corpus by executing the script:
+```
+./anonParallel_java.sh
+``` 
+This will take care of the proper bracket pre-processing anonymization, and splitting of the corpus to training, dev and test source and target files that can be directly used for training and evaluating your models.
+There are three options to change there:
+- `DATA_DIR` which points to a directory that will hold pre-processed files with many interesting meta-data, such as vocabularies, alignments, anonymization pairs, histograms and so on.
+- `OUT_DIR` which refers to a directory which contains only the essential anonymized training, dev, test source and target files, as well as the anonymization alignments in separate files. 
+- `suffix` which is a handy parameter for changing the name of `OUT_DIR` directory.
+
+4. (Generation only) De-anonymize and automatically evaluate the output of a model using averaged BLEU, METEOR and multiBLEU by executing the script:
+```
+./recomputeMetrics.sh [INPUT_PATH REF_PATH]
+```
+The script contains three important options:
+- `DATASET` which refers to the portion of the set to evaluate against; default is `dev` (the other option is `test`).
+- `DATA_PATHNAME` which points to the preprocessed corpus directory created from the previous script, which contains the reference data. Normally, it should be the same as `OUT_DIR` from above.
+- `INPUT_PATH` which is the folder containing the file(s) with anonymized predictions. In case there are multiple files, for example from different epoch runs, then the code automatically processes all of them and reports back the one with the highest multiBLEU score.
