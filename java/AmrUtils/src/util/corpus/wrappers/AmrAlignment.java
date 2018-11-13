@@ -118,7 +118,11 @@ public class AmrAlignment
     
     public boolean isEmpty()
     {
-        return wordIds.isEmpty() || (wordIds.size() == 1 && wordIds.get(0) == -1);
+        boolean flag = true
+            for (int i = 0; i < wordIds.size() && flag; i++) {
+                flag = (wordIds.get(i) == -1);
+            }
+        return (wordIds.isEmpty() || flag);
     }
     
     @Override
