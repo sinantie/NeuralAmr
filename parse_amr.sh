@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GPU_ID=3
+GPU_ID=1
 
 VOCAB_DIR=vocab/20M-vocab-parse
 MODEL_FILE=models/20M_parse/amr-model_pretrain_epoch4_fine_tune_epoch49.00_2.76.t7
